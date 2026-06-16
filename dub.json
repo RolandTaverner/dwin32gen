@@ -1,0 +1,53 @@
+{
+    "name": "dwin32gen",
+    "description": "The D Windows SDK projections generator",
+    "authors": [
+        "Răzvan Ștefănescu",
+        "Alexander Verbitsky"
+    ],
+    "license": "BSL-1.0",
+    "subPackages": [
+        {
+            "name": "climetadata",
+            "description": "CLI metadata (winmd) parser",
+            "targetType": "staticLibrary",
+            "targetName": "climetadata",
+            "targetPath": "bin/$BUILD_TYPE",
+            "sourcePaths": [
+                "climetadata/source"
+            ],
+            "importPaths": [
+                "climetadata/source"
+            ]
+        },
+        {
+            "name": "dwin32gen",
+            "description": "The D Windows SDK projection library",
+            "targetName": "dwin32gen",
+            "targetType": "executable",
+            "targetPath": "bin/$BUILD_TYPE",
+            "sourcePaths": [
+                "dwin32gen/source"
+            ],
+            "dependencies": {
+                ":climetadata": "*"
+            }
+        }
+    ],
+    "buildTypes": {
+        "debug": {
+            "buildOptions": [
+                "debugMode",
+                "debugInfo",
+                "optimize"
+            ]
+        },
+        "release": {
+            "buildOptions": [
+                "releaseMode",
+                "inline",
+                "optimize"
+            ]
+        }
+    }
+}
