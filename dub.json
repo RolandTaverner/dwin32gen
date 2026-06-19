@@ -22,7 +22,7 @@
         },
         {
             "name": "dwin32gen",
-            "description": "The D Windows SDK projection library",
+            "description": "The D Windows SDK projection generator",
             "targetName": "dwin32gen",
             "targetType": "executable",
             "targetPath": "bin/$BUILD_TYPE",
@@ -30,7 +30,21 @@
                 "dwin32gen/source"
             ],
             "dependencies": {
-                ":climetadata": "*"
+                "dwin32gen:climetadata": "*"
+            }
+        },
+        {
+            "name": "dwin32json",
+            "description": "Dump CLI metadata to JSON",
+            "targetName": "dwin32json",
+            "targetType": "executable",
+            "targetPath": "bin/$BUILD_TYPE",
+            "sourcePaths": [
+                "dwin32json/source"
+            ],
+            "dependencies": {
+                "dwin32gen:climetadata": "*",
+                "argsd": "~>1.2.0"
             }
         }
     ],
@@ -49,5 +63,6 @@
                 "optimize"
             ]
         }
-    }
+    },
+    "targetType": "none"
 }
