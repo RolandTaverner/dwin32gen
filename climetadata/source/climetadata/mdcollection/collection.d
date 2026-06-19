@@ -18,6 +18,11 @@ struct Collection(MDTableType md)
         this.db = db;
     }
 
+    public bool empty() const
+    {
+        return table.rowCount == 0;
+    }
+
     // rowID is 1-based
     public Entity!md opIndex(uint rowID) const
     {
