@@ -1,6 +1,9 @@
 {
 	"fileVersion": 1,
 	"versions": {
-		"argsd": "1.2.0"
+		"argsd": "1.2.0",
+		"dunit": "1.0.16",
+		"painlessjson": "1.4.0",
+		"painlesstraits": "0.3.0"
 	}
 }

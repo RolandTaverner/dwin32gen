@@ -1505,6 +1505,12 @@ private mixin template DeclListIndexField(alias md, string Name, alias mdTarget)
     mixin(injectFieldGetter());
 }
 
+struct IndexValue
+{
+    MDTableType md;
+    uint rowID;
+}
+
 // Declares member function (index field value getter)
 // const(Entity!mdTarget) get##Name() const { ... }
 // bool null##Name() const { ... }
@@ -1538,6 +1544,10 @@ private mixin template DeclIndexField(alias md, string Name, alias mdTarget)
         decl ~= "  const auto columnValue = row.get" ~ Name ~ "();\n";
         decl ~= "  return columnValue == 0 || columnValue > db.getTable!(" ~ targetTableType ~ ")().rowCount;\n";
         decl ~= "}\n";
+
+        // Helper for JSON dump
+        decl ~= "public IndexValue _getIndex" ~ Name ~ "() const\n";
+        decl ~= "{ return IndexValue(" ~ targetTableType ~ ", row.get" ~ Name ~ "()); }\n";
 
         return decl;
     };

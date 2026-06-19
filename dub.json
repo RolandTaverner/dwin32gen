@@ -44,7 +44,8 @@
             ],
             "dependencies": {
                 "dwin32gen:climetadata": "*",
-                "argsd": "~>1.2.0"
+                "argsd": "~>1.2.0",
+                "painlessjson": "~>1.4.0"
             }
         }
     ],
