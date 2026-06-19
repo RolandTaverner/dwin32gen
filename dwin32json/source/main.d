@@ -1,5 +1,6 @@
 module dwin32;
 
+import std.conv : to;
 import std.digest : toHexString;
 import std.file : exists, FileException, isDir, isFile, mkdirRecurse;
 import std.path : buildPath, dirName, dirSeparator;
@@ -81,9 +82,9 @@ int main(string[] args)
     dumpTable!(MDTableType.assemblyProcessor)(db, options.outDir);
     dumpTable!(MDTableType.assemblyRef)(db, options.outDir);
     dumpTable!(MDTableType.assemblyRefOS)(db, options.outDir);
-    // dumpTable!(MDTableType.assemblyRefProcessor)(db, options.outDir);
-    // dumpTable!(MDTableType.classLayout)(db, options.outDir);
-    // dumpTable!(MDTableType.constant)(db, options.outDir);
+    dumpTable!(MDTableType.assemblyRefProcessor)(db, options.outDir);
+    dumpTable!(MDTableType.classLayout)(db, options.outDir);
+    dumpTable!(MDTableType.constant)(db, options.outDir);
     // dumpTable!(MDTableType.customAttribute)(db, options.outDir);
     // dumpTable!(MDTableType.declSecurity)(db, options.outDir);
     // dumpTable!(MDTableType.event)(db, options.outDir);
@@ -250,8 +251,80 @@ string entityToJSON(ref const AssemblyRefOSEntity e)
     return ps.toJSON(t).toString();
 }
 
+string entityToJSON(ref const AssemblyRefProcessorEntity e)
+{
+    struct AssemblyRefProcessorJS
+    {
+        uint Processor;
+        uint AssemblyRef;
+    }
+
+    AssemblyRefProcessorJS t = AssemblyRefProcessorJS(
+        e.getProcessor(),
+        e._getIndexAssemblyRef().rowID,
+        );
+
+    return ps.toJSON(t).toString();
+}
+
+string entityToJSON(ref const ClassLayoutEntity e)
+{
+    struct ClassLayoutJS
+    {
+        ushort PackingSize;
+        uint ClassSize;
+        IndexValueJSON Parent;
+    }
+
+    ClassLayoutJS t = ClassLayoutJS(
+        e.getPackingSize(),
+        e.getClassSize(),
+        IndexValueJSON(e._getIndexParent()),
+        );
+
+    return ps.toJSON(t).toString();
+}
+
+string entityToJSON(ref const ConstantEntity e)
+{
+    struct ConstantJS
+    {
+        ushort Type;
+        IndexValueJSON Parent;
+        string Value;
+    }
+
+    auto parent = e._getCodedIndexParent();
+
+    ConstantJS t = ConstantJS(
+        e.getType(),
+        IndexValueJSON(to!string(parent.type()), parent.index()),
+        e.getValue().toHexString(),
+        );
+
+    return ps.toJSON(t).toString();
+}
+
 // string entityToJSON(MDTableType md)(ref const Entity!md e)
 // {
     
 //     return "{\"error\": \"unknown entity type\"}";
 // }
+
+struct IndexValueJSON
+{
+    public this(string table, uint rowID)
+    {
+        this.table = table;
+        this.rowID = rowID;
+    }
+
+    public this(in IndexValue iv)
+    {
+        table = to!string(iv.md);
+        rowID = iv.rowID;
+    }
+
+    string table;
+    uint rowID;
+}

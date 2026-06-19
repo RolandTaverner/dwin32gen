@@ -1438,6 +1438,16 @@ private mixin template DeclCodedIndexFieldGetter(alias md, string Name, CodedInd
         decl ~= "  return getCodedIndexValue!(" ~ CodedIndexType.stringof ~ ")(entity.db, codedIndex);\n";
         decl ~= "}\n";
 
+        // Helper for JSON dump
+        decl ~= "public CompositeIndex!(" ~ CodedIndexType.stringof ~ ") _getCodedIndex" ~ Name ~ "(in " ~ entityType ~ " entity)\n";
+        decl ~= "{\n";
+        decl ~= "  alias " ~ columnValueTypeAlias ~ " = " ~ columnValueType ~ ";\n";
+        decl ~= "  static assert(" ~ columnValueTypeAlias ~ ".Kind == ValueKind.CodedIndex);\n";
+        decl ~= "  const auto columnValue = entity.row.get" ~ Name ~ "();\n";
+        decl ~= "  const auto codedIndex = CompositeIndex!(" ~ CodedIndexType.stringof ~ ")(columnValue);\n";
+        decl ~= "  return codedIndex;\n";
+        decl ~= "}\n";
+
         return decl;
     };
 
@@ -1505,7 +1515,7 @@ private mixin template DeclListIndexField(alias md, string Name, alias mdTarget)
     mixin(injectFieldGetter());
 }
 
-struct IndexValue
+public struct IndexValue
 {
     MDTableType md;
     uint rowID;
